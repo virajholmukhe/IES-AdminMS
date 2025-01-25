@@ -6,6 +6,7 @@ import org.springframework.context.annotation.PropertySource;
 public enum ExceptionConstants {
 
 	CASEWORKER_NOT_FOUND("caseWorker.not.found"),
+	CASE_WORKER_ALREADY_EXISTS("caseWorker.already.exists"),
 	PLAN_NOT_FOUND("plan.not.found");
 
 	private final String type;

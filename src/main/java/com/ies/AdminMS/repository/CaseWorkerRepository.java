@@ -9,7 +9,5 @@ import java.util.List;
 @Repository
 public interface CaseWorkerRepository extends JpaRepository<CaseWorkerEntity, String> {
 
-    public List<CaseWorkerEntity> getAllCaseWorkers();
-
-    public CaseWorkerEntity findByEmailId(String emailId);
+    CaseWorkerEntity findByEmailId(String emailId);
 }

@@ -1,5 +1,6 @@
 package com.ies.AdminMS.exception;
 
+import jakarta.validation.ConstraintViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,8 +37,8 @@ public class ExceptionControllerAdvice {
 	public ResponseEntity<ErrorMessage> adminMSExceptionHandler(AdminMSException ex){
 		ErrorMessage error = new ErrorMessage();
 		error.setErrorCode(HttpStatus.BAD_REQUEST.value());
-		error.setMessage(ex.getMessage());
-		logger.error(ex.getMessage());
+		error.setMessage(environment.getProperty(ex.getMessage()));
+		logger.error(environment.getProperty(ex.getMessage()));
 		return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
 	}
 	
@@ -49,4 +50,5 @@ public class ExceptionControllerAdvice {
 		logger.info(error.getMessage());
 		return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
 	}
+
 }

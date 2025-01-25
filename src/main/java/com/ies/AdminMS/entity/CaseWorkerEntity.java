@@ -1,10 +1,18 @@
 package com.ies.AdminMS.entity;
 
+import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
-import java.util.Date;
+import java.time.LocalDate;
 
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@Entity
 @Data
 public class CaseWorkerEntity {
 
@@ -13,8 +21,9 @@ public class CaseWorkerEntity {
     private String emailId;
     private Long mobileNumber;
     private String gender;
-    private Date dateOfBirth;
-    private Double aadharNumber;
-    private Boolean isActive;
+    private LocalDate dateOfBirth;
+    private Long aadharNumber;
+    @Builder.Default
+    private boolean activeStatus = false;
 
 }

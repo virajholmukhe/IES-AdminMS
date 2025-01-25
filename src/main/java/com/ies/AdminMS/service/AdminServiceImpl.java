@@ -8,12 +8,16 @@ import com.ies.AdminMS.exception.AdminMSException;
 import com.ies.AdminMS.exception.ExceptionConstants;
 import com.ies.AdminMS.repository.CaseWorkerRepository;
 import com.ies.AdminMS.repository.PlanRepository;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
+import javax.swing.text.html.Option;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+@Service
 public class AdminServiceImpl implements AdminService{
 
     @Autowired
@@ -23,54 +27,92 @@ public class AdminServiceImpl implements AdminService{
     private PlanRepository planRepository;
 
     @Override
-    public CaseWorkerDTO createCaseWorker(CaseWorkerDTO caseWorkerDTO) {
-        CaseWorkerEntity caseWorkerEntity = CaseWorkerDTO.prepareEntity(caseWorkerDTO);
-        return CaseWorkerDTO.prepareDTO(caseWorkerRepository.save(caseWorkerEntity));
+    public CaseWorkerDTO createCaseWorker(CaseWorkerDTO caseWorkerDTO) throws AdminMSException {
+        CaseWorkerEntity caseWorkerEntityExists = caseWorkerRepository.findByEmailId(caseWorkerDTO.getEmailId());
+        if(caseWorkerEntityExists != null){
+            throw new AdminMSException(ExceptionConstants.CASE_WORKER_ALREADY_EXISTS.toString());
+        }
+        CaseWorkerEntity caseWorkerEntity = CaseWorkerEntity.builder().build();
+        BeanUtils.copyProperties(caseWorkerDTO, caseWorkerEntity);
+        CaseWorkerEntity savedCaseWorkerEntity = caseWorkerRepository.save(caseWorkerEntity);
+        CaseWorkerDTO savedCaseWorkerDTO = new CaseWorkerDTO();
+        BeanUtils.copyProperties(savedCaseWorkerEntity, savedCaseWorkerDTO);
+        return savedCaseWorkerDTO;
     }
 
     @Override
     public List<CaseWorkerDTO> getAllCaseWorkers() {
         List<CaseWorkerDTO> caseWorkerDTOList = new ArrayList<>();
-        List<CaseWorkerEntity> caseWorkerEntityList = caseWorkerRepository.getAllCaseWorkers();
+        List<CaseWorkerEntity> caseWorkerEntityList = caseWorkerRepository.findAll();
         for(CaseWorkerEntity caseWorkerEntity : caseWorkerEntityList){
-            caseWorkerDTOList.add(CaseWorkerDTO.prepareDTO(caseWorkerEntity));
+            CaseWorkerDTO caseWorkerDTO = new CaseWorkerDTO();
+            BeanUtils.copyProperties(caseWorkerEntity, caseWorkerDTO);
+            caseWorkerDTOList.add(caseWorkerDTO);
         }
         return caseWorkerDTOList;
     }
 
     @Override
-    public CaseWorkerDTO editCaseWorker(CaseWorkerDTO caseWorkerDTO) {
-        CaseWorkerEntity caseWorkerEntity = CaseWorkerDTO.prepareEntity(caseWorkerDTO);
-        return CaseWorkerDTO.prepareDTO(caseWorkerRepository.save(caseWorkerEntity));
+    public CaseWorkerDTO editCaseWorker(CaseWorkerDTO caseWorkerDTO) throws AdminMSException {
+        CaseWorkerEntity caseWorkerEntityExists = caseWorkerRepository.findByEmailId(caseWorkerDTO.getEmailId());
+        if(caseWorkerEntityExists != null){
+            BeanUtils.copyProperties(caseWorkerDTO, caseWorkerEntityExists);
+            CaseWorkerEntity savedCaseWorkerEntity = caseWorkerRepository.save(caseWorkerEntityExists);
+            CaseWorkerDTO savedCaseWorkerDTO = new CaseWorkerDTO();
+            BeanUtils.copyProperties(savedCaseWorkerEntity, savedCaseWorkerDTO);
+            return savedCaseWorkerDTO;
+        }
+        else{
+            throw new AdminMSException(ExceptionConstants.CASEWORKER_NOT_FOUND.toString());
+        }
     }
 
     @Override
     public CaseWorkerDTO toggleIsActive(String emailId) {
         CaseWorkerEntity caseWorkerEntity = caseWorkerRepository.findByEmailId(emailId);
-        caseWorkerEntity.setIsActive(!caseWorkerEntity.getIsActive());
-        return CaseWorkerDTO.prepareDTO(caseWorkerRepository.save(caseWorkerEntity));
+        caseWorkerEntity.setActiveStatus(!caseWorkerEntity.isActiveStatus());
+        CaseWorkerEntity savedCaseWorkerEntity = caseWorkerRepository.save(caseWorkerEntity);
+        CaseWorkerDTO savedCaseWorkerDTO = new CaseWorkerDTO();
+        BeanUtils.copyProperties(savedCaseWorkerEntity, savedCaseWorkerDTO);
+        return savedCaseWorkerDTO;
     }
 
     @Override
     public PlanDTO createPlan(PlanDTO planDTO) {
-        PlanEntity planEntity = PlanDTO.prepareEntity(planDTO);
-        return PlanDTO.prepareDTO(planRepository.save(planEntity));
+
+        PlanEntity planEntity = new PlanEntity();
+        BeanUtils.copyProperties(planDTO, planEntity);
+        PlanEntity savedPlanEntity = planRepository.save(planEntity);
+        PlanDTO savedPlanDTO = new PlanDTO();
+        BeanUtils.copyProperties(savedPlanEntity, savedPlanDTO);
+        return savedPlanDTO;
     }
 
     @Override
     public List<PlanDTO> getAllPlans() {
         List<PlanDTO> planDTOList = new ArrayList<>();
-        List<PlanEntity> planEntityList = planRepository.getAllPlans();
+        List<PlanEntity> planEntityList = planRepository.findAll();
         for(PlanEntity planEntity : planEntityList){
-            planDTOList.add(PlanDTO.prepareDTO(planEntity));
+            PlanDTO planDTO = new PlanDTO();
+            BeanUtils.copyProperties(planEntity, planDTO);
+            planDTOList.add(planDTO);
         }
         return planDTOList;
     }
 
     @Override
-    public PlanDTO editPlan(PlanDTO planDTO) {
-        PlanEntity planEntity = PlanDTO.prepareEntity(planDTO);
-        return PlanDTO.prepareDTO(planRepository.save(planEntity));
+    public PlanDTO editPlan(PlanDTO planDTO) throws AdminMSException {
+        Optional<PlanEntity> planEntityOpt = planRepository.findById(planDTO.getId());
+        if(planEntityOpt.isPresent()){
+            BeanUtils.copyProperties(planDTO, planEntityOpt.get());
+            PlanEntity savedPlanEntity = planRepository.save(planEntityOpt.get());
+            PlanDTO savedPlanDTO = new PlanDTO();
+            BeanUtils.copyProperties(savedPlanEntity, savedPlanDTO);
+            return savedPlanDTO;
+        }else{
+            throw new AdminMSException(ExceptionConstants.PLAN_NOT_FOUND.toString());
+        }
+
     }
 
     @Override
@@ -78,8 +120,11 @@ public class AdminServiceImpl implements AdminService{
         Optional<PlanEntity> OptionalPlanEntity = planRepository.findById(planId);
         if(OptionalPlanEntity.isPresent()){
             PlanEntity planEntity = OptionalPlanEntity.get();
-            planEntity.setIsActive(!planEntity.getIsActive());
-            return PlanDTO.prepareDTO(planRepository.save(planEntity));
+            planEntity.setActiveStatus(!planEntity.getActiveStatus());
+            PlanEntity savedPlanEntity = planRepository.save(planEntity);
+            PlanDTO savedPlanDTO = new PlanDTO();
+            BeanUtils.copyProperties(savedPlanEntity, savedPlanDTO);
+            return savedPlanDTO;
         }else{
             throw new AdminMSException(ExceptionConstants.PLAN_NOT_FOUND.toString());
         }

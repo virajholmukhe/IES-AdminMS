@@ -1,42 +1,31 @@
 package com.ies.AdminMS.dto;
 
-import com.ies.AdminMS.entity.PlanEntity;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
-import javax.validation.constraints.Past;
-import javax.validation.constraints.Pattern;
-import java.util.Date;
+import jakarta.validation.constraints.Pattern;
+
+import java.time.LocalDate;
 
 @Data
 public class PlanDTO {
 
     private Long id;
+
+    @NotNull(message = "{name.notnull.invalid}")
     @Pattern(regexp = "^[a-zA-Z0-9]+$", message = "{name.pattern.invalid}")
     private String name;
-    private Date startDate;
-    private Date endDate;
+
+    @NotNull(message = "{startDate.notnull.invalid}")
+    private LocalDate startDate;
+
+    @NotNull(message = "{endDate.notnull.invalid}")
+    private LocalDate endDate;
+
+    @NotNull(message = "{category.notnull.invalid}")
+    @Pattern(regexp = "^[a-zA-Z]+$", message = "{category.pattern.invalid}")
     private String category;
-    private Boolean isActive;
 
-    public static PlanDTO prepareDTO(PlanEntity entity) {
-        PlanDTO dto = new PlanDTO();
-        dto.setId(entity.getId());
-        dto.setName(entity.getName());
-        dto.setStartDate(entity.getStartDate());
-        dto.setEndDate(entity.getEndDate());
-        dto.setCategory(entity.getCategory());
-        dto.setIsActive(entity.getIsActive());
-        return dto;
-    }
+    private boolean activeStatus;
 
-    public static PlanEntity prepareEntity(PlanDTO dto) {
-        PlanEntity entity = new PlanEntity();
-        entity.setId(dto.getId());
-        entity.setName(dto.getName());
-        entity.setStartDate(dto.getStartDate());
-        entity.setEndDate(dto.getEndDate());
-        entity.setCategory(dto.getCategory());
-        entity.setIsActive(dto.getIsActive());
-        return entity;
-    }
 }

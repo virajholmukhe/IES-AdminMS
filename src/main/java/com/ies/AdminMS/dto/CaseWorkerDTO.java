@@ -1,49 +1,37 @@
 package com.ies.AdminMS.dto;
 
-import com.ies.AdminMS.entity.CaseWorkerEntity;
 import lombok.Data;
 
-import javax.validation.constraints.*;
-import java.util.Date;
+import jakarta.validation.constraints.*;
+import org.hibernate.validator.constraints.Range;
+
+import java.time.LocalDate;
 
 @Data
 public class CaseWorkerDTO {
+
     @Size(min = 3, max = 50, message = "{fullname.size.invalid}")
     @Pattern(regexp = "^[a-zA-Z\\s]*$", message = "{fullname.pattern.invalid}")
     private String fullname;
-    @Email(message = "{email.pattern.invalid}")
+
+    @Pattern(regexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$", message = "{emailId.pattern.invalid}")
     private String emailId;
-    @Pattern(regexp = "^[0-9]{10}$", message = "{mobileNumber.pattern.invalid}")
+
+    @NotNull(message = "{mobileNumber.notnull.invalid}")
+    @Range(min = 1000000000L, max = 9999999999L, message = "{mobileNumber.pattern.invalid}")
     private Long mobileNumber;
+
     @Pattern(regexp = "Male|Female|Other", message = "{gender.pattern.invalid}")
     private String gender;
+
+    @NotNull(message = "{dateOfBirth.notnull.invalid}")
     @Past(message = "{dateOfBirth.future.invalid}")
-    private Date dateOfBirth;
-    @Pattern(regexp = "^[0-9]{12}$", message = "{aadharNumber.pattern.invalid}")
-    private Double aadharNumber;
-    private Boolean isActive;
+    private LocalDate dateOfBirth;
 
-    public static CaseWorkerDTO prepareDTO(CaseWorkerEntity entity) {
-        CaseWorkerDTO dto = new CaseWorkerDTO();
-        dto.setFullname(entity.getFullname());
-        dto.setEmailId(entity.getEmailId());
-        dto.setMobileNumber(entity.getMobileNumber());
-        dto.setGender(entity.getGender());
-        dto.setDateOfBirth(entity.getDateOfBirth());
-        dto.setAadharNumber(entity.getAadharNumber());
-        dto.setIsActive(entity.getIsActive());
-        return dto;
-    }
+    @NotNull(message = "{aadharNumber.notnull.invalid}")
+    @Range(min = 100000000000L, max = 999999999999L, message = "{aadharNumber.pattern.invalid}")
+    private Long aadharNumber;
 
-    public static CaseWorkerEntity prepareEntity(CaseWorkerDTO dto) {
-        CaseWorkerEntity entity = new CaseWorkerEntity();
-        entity.setFullname(dto.getFullname());
-        entity.setEmailId(dto.getEmailId());
-        entity.setMobileNumber(dto.getMobileNumber());
-        entity.setGender(dto.getGender());
-        entity.setDateOfBirth(dto.getDateOfBirth());
-        entity.setAadharNumber(dto.getAadharNumber());
-        entity.setIsActive(dto.getIsActive());
-        return entity;
-    }
+    private boolean activeStatus;
+
 }

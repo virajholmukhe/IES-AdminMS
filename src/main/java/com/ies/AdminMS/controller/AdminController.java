@@ -4,8 +4,11 @@ import com.ies.AdminMS.dto.CaseWorkerDTO;
 import com.ies.AdminMS.dto.PlanDTO;
 import com.ies.AdminMS.exception.AdminMSException;
 import com.ies.AdminMS.service.AdminService;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -13,13 +16,16 @@ import java.util.List;
 @RestController
 @CrossOrigin
 @RequestMapping(value = "admin")
+@Validated
+@RequiredArgsConstructor
 public class AdminController {
 
     @Autowired
     private AdminService adminService;
 
     @PostMapping(value = "create-case-worker")
-    public ResponseEntity<CaseWorkerDTO> createCaseWorker(@RequestBody CaseWorkerDTO caseWorkerDTO){
+    public ResponseEntity<CaseWorkerDTO> createCaseWorker(@RequestBody @Valid CaseWorkerDTO caseWorkerDTO) throws AdminMSException {
+        System.out.println(caseWorkerDTO.toString());
         return ResponseEntity.ok(adminService.createCaseWorker(caseWorkerDTO));
     }
 
@@ -29,7 +35,7 @@ public class AdminController {
     }
 
     @PutMapping(value = "edit-case-worker")
-    public ResponseEntity<CaseWorkerDTO> editCaseWorker(@RequestBody CaseWorkerDTO caseWorkerDTO){
+    public ResponseEntity<CaseWorkerDTO> editCaseWorker(@RequestBody @Valid CaseWorkerDTO caseWorkerDTO) throws AdminMSException {
         return ResponseEntity.ok(adminService.editCaseWorker(caseWorkerDTO));
     }
 
@@ -39,7 +45,7 @@ public class AdminController {
     }
 
     @PostMapping(value = "create-plan")
-    public ResponseEntity<PlanDTO> createPlan(@RequestBody PlanDTO planDTO){
+    public ResponseEntity<PlanDTO> createPlan(@RequestBody @Valid PlanDTO planDTO){
         return ResponseEntity.ok(adminService.createPlan(planDTO));
     }
 
@@ -49,7 +55,7 @@ public class AdminController {
     }
 
     @PutMapping(value = "edit-plan")
-    public ResponseEntity<PlanDTO> editPlan(@RequestBody PlanDTO planDTO){
+    public ResponseEntity<PlanDTO> editPlan(@RequestBody @Valid PlanDTO planDTO) throws AdminMSException {
         return ResponseEntity.ok(adminService.editPlan(planDTO));
     }
 
