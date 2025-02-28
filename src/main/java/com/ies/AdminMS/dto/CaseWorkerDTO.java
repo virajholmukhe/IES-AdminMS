@@ -10,6 +10,7 @@ import java.time.LocalDate;
 @Data
 public class CaseWorkerDTO {
 
+    private String caseWorkerId;
     @Size(min = 3, max = 50, message = "{fullname.size.invalid}")
     @Pattern(regexp = "^[a-zA-Z\\s]*$", message = "{fullname.pattern.invalid}")
     private String fullname;
@@ -18,8 +19,8 @@ public class CaseWorkerDTO {
     private String emailId;
 
     @NotNull(message = "{mobileNumber.notnull.invalid}")
-    @Range(min = 1000000000L, max = 9999999999L, message = "{mobileNumber.pattern.invalid}")
-    private Long mobileNumber;
+    @Pattern(regexp = "^[0-9]{10}$", message = "{phone.pattern.invalid}")
+    private String mobileNumber;
 
     @Pattern(regexp = "Male|Female|Other", message = "{gender.pattern.invalid}")
     private String gender;
@@ -29,8 +30,8 @@ public class CaseWorkerDTO {
     private LocalDate dateOfBirth;
 
     @NotNull(message = "{aadharNumber.notnull.invalid}")
-    @Range(min = 100000000000L, max = 999999999999L, message = "{aadharNumber.pattern.invalid}")
-    private Long aadharNumber;
+    @Pattern(regexp = "^[0-9]{10}$", message = "{aadharNumber.pattern.invalid}")
+    private String aadharNumber;
 
     private boolean activeStatus;
 

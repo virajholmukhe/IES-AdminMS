@@ -1,5 +1,6 @@
 package com.ies.AdminMS.entity;
 
+import com.ies.AdminMS.utils.PlanId;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -12,8 +13,8 @@ import java.time.LocalDate;
 @Data
 public class PlanEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    @PlanId
+    private String id;
     private String name;
     private LocalDate startDate;
     private LocalDate endDate;

@@ -10,7 +10,7 @@ import java.time.LocalDate;
 @Data
 public class PlanDTO {
 
-    private Long id;
+    private String id;
 
     @NotNull(message = "{name.notnull.invalid}")
     @Pattern(regexp = "^[a-zA-Z0-9]+$", message = "{name.pattern.invalid}")
